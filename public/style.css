@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+#toolbar {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 15px;
+  background: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+}
+
+#board {
+  display: block;
+  cursor: crosshair;
+}
