@@ -8,36 +8,24 @@ const io = new Server(server);
 
 app.use(express.static('public'));
 
-// One history array per room name, e.g. rooms['art-class'] = [segment, segment, ...]
-const rooms = {};
+// Every finished line segment gets stored here so a new visitor
+// can redraw everything that happened before they connected.
+let history = [];
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
-  let currentRoom = null;
-
-  socket.on('joinRoom', (roomName) => {
-    currentRoom = roomName;
-    socket.join(roomName);
-
-    if (!rooms[roomName]) {
-      rooms[roomName] = [];
-    }
-
-    // Catch this new user up on everything drawn so far in this room.
-    socket.emit('history', rooms[roomName]);
-  });
+  // Catch this new user up on everything drawn so far.
+  socket.emit('history', history);
 
   socket.on('draw', (segment) => {
-    if (!currentRoom) return;
-    rooms[currentRoom].push(segment);
-    socket.to(currentRoom).emit('draw', segment); // send to others in this room only
+    history.push(segment);
+    socket.broadcast.emit('draw', segment); // send to everyone else
   });
 
   socket.on('clear', () => {
-    if (!currentRoom) return;
-    rooms[currentRoom] = [];
-    socket.to(currentRoom).emit('clear');
+    history = [];
+    socket.broadcast.emit('clear');
   });
 
   socket.on('disconnect', () => {

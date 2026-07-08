@@ -1,13 +1,5 @@
 const socket = io();
 
-// Room name comes from the URL, e.g. ?room=art-class. Falls back to 'default'.
-const params = new URLSearchParams(window.location.search);
-const roomName = params.get('room') || 'default';
-
-socket.on('connect', () => {
-  socket.emit('joinRoom', roomName);
-});
-
 const canvas = document.getElementById('board');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
